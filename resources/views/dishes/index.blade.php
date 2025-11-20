@@ -38,7 +38,7 @@
                                 Detalles
                             </th>
                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                Acción
+                                Acciones
                             </th>
                         </tr>
                         </thead>
@@ -93,26 +93,28 @@
                                 </td>
 
                                 {{-- ACCIONES --}}
-                                <td class="align-middle text-center">
-                                    <a href="{{ route('dishes.show', $dish) }}"
-                                       class="text-sm text-info font-weight-bold me-3">
-                                        Ver
-                                    </a>
-                                    <a href="{{ route('dishes.edit', $dish) }}"
-                                       class="text-sm text-warning font-weight-bold me-3">
-                                        Editar
-                                    </a>
-                                    <form action="{{ route('dishes.destroy', $dish) }}"
-                                          method="POST"
-                                          style="display:inline-block"
-                                          onsubmit="return confirm('¿Eliminar este platillo?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                                class="btn btn-link text-danger text-sm p-0 m-0">
-                                            Eliminar
-                                        </button>
-                                    </form>
+                                <td class="align-middle">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a href="{{ route('dishes.show', $dish) }}"
+                                           class="btn btn-sm btn-info">
+                                            Ver
+                                        </a>
+
+                                        <a href="{{ route('dishes.edit', $dish) }}"
+                                           class="btn btn-sm btn-warning text-white">
+                                            Editar
+                                        </a>
+
+                                        <form action="{{ route('dishes.destroy', $dish) }}"
+                                              method="POST"
+                                              onsubmit="return confirm('¿Eliminar este platillo?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                Eliminar
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -131,3 +133,4 @@
         @include('layouts.footers.auth.footer')
     </div>
 @endsection
+

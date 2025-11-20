@@ -51,7 +51,7 @@
                             <table class="table align-items-center mb-0">
                                 <thead>
                                 <tr>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Nombre
                                     </th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -62,25 +62,31 @@
                                 <tbody>
                                 @forelse($categorias as $categoria)
                                     <tr>
-                                        <td class="align-middle">
-                                            <span class="text-xs font-weight-bold">{{ $categoria->nombre }}</span>
-                                        </td>
+                                        {{-- NOMBRE --}}
                                         <td class="align-middle text-center">
-                                            <a href="{{ route('categorias.edit', $categoria) }}"
-                                               class="text-sm text-info font-weight-bold me-3">
-                                                Editar
-                                            </a>
+                                            <span class="text-sm font-weight-bold">
+                                                {{ $categoria->nombre }}
+                                            </span>
+                                        </td>
 
-                                            <form action="{{ route('categorias.destroy', $categoria) }}"
-                                                  method="POST"
-                                                  style="display:inline-block"
-                                                  onsubmit="return confirm('¿Eliminar esta categoría?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-link text-danger text-sm p-0 m-0">
-                                                    Eliminar
-                                                </button>
-                                            </form>
+                                        {{-- ACCIONES --}}
+                                        <td class="align-middle">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a href="{{ route('categorias.edit', $categoria) }}"
+                                                   class="btn btn-sm btn-primary">
+                                                    Editar
+                                                </a>
+
+                                                <form action="{{ route('categorias.destroy', $categoria) }}"
+                                                      method="POST"
+                                                      onsubmit="return confirm('¿Eliminar esta categoría?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-danger">
+                                                        Eliminar
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty

@@ -57,10 +57,10 @@
                             <table class="table align-items-center mb-0">
                                 <thead>
                                 <tr>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Nombre
                                     </th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Descripción
                                     </th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -71,26 +71,38 @@
                                 <tbody>
                                 @forelse($roles as $role)
                                     <tr>
-                                        <td class="align-middle">
-                                            <span class="text-xs font-weight-bold">{{ $role->nombre }}</span>
-                                        </td>
-                                        <td class="align-middle">
-                                            <span class="text-xs">{{ $role->descripcion }}</span>
-                                        </td>
+                                        {{-- NOMBRE --}}
                                         <td class="align-middle text-center">
-                                            <a href="{{ route('roles.edit', $role) }}"
-                                               class="text-sm text-info font-weight-bold me-3">Editar</a>
+                                            <span class="text-sm font-weight-bold">
+                                                {{ $role->nombre }}
+                                            </span>
+                                        </td>
 
-                                            <form action="{{ route('roles.destroy', $role) }}"
-                                                  method="POST"
-                                                  style="display:inline-block"
-                                                  onsubmit="return confirm('¿Eliminar este rol?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-link text-danger text-sm p-0 m-0">
-                                                    Eliminar
-                                                </button>
-                                            </form>
+                                        {{-- DESCRIPCIÓN --}}
+                                        <td class="align-middle text-center">
+                                            <span class="text-sm">
+                                                {{ $role->descripcion ?? '—' }}
+                                            </span>
+                                        </td>
+
+                                        {{-- ACCIONES --}}
+                                        <td class="align-middle">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a href="{{ route('roles.edit', $role) }}"
+                                                   class="btn btn-sm btn-primary">
+                                                    Editar
+                                                </a>
+
+                                                <form action="{{ route('roles.destroy', $role) }}"
+                                                      method="POST"
+                                                      onsubmit="return confirm('¿Eliminar este rol?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-danger">
+                                                        Eliminar
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty

@@ -81,10 +81,11 @@
                                 {{-- COLUMNA ACCIÓN --}}
                                 <td class="align-middle text-center">
                                     <a href="{{ route('user-management.edit', $user) }}"
-                                       class="text-sm text-info font-weight-bold me-3">
-                                        Edit
+                                       class="btn btn-sm btn-primary">
+                                        Editar
                                     </a>
                                 </td>
+
                             </tr>
                         @endforeach
                         </tbody>
