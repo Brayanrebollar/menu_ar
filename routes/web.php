@@ -26,6 +26,9 @@ Route::get('/', function () {
         : redirect()->route('login');
 })->name('root');
 
+Route::get('/p/{dish}', [DishController::class, 'publicShow'])
+    ->name('dishes.public.show');
+
 // Auth invitado
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'show'])->name('login');

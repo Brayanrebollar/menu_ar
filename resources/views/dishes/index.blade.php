@@ -44,13 +44,28 @@
                         </thead>
                         <tbody>
                         @forelse($dishes as $dish)
+                            @php
+                                $imageUrl = $dish->imagen
+                                    ? asset('storage/' . $dish->imagen)
+                                    : asset('img/default-dish.jpg');   // pon aquí tu imagen genérica
+                            @endphp
+
                             <tr>
-                                {{-- NOMBRE --}}
+                                {{-- FOTO + NOMBRE DEL PLATILLO --}}
                                 <td class="align-middle">
-                                    <span class="text-sm font-weight-bold">
-                                        {{ $dish->nombre }}
-                                    </span>
+                                    <div class="d-flex flex-column align-items-center text-center">
+                                        <div class="mb-2">
+                                            <img src="{{ $imageUrl }}"
+                                                 alt="Foto {{ $dish->nombre }}"
+                                                 class="border-radius-lg shadow-sm"
+                                                 style="width: 120px; height: 120px; object-fit: cover;">
+                                        </div>
+                                        <span class="text-sm font-weight-bold">
+                                            {{ $dish->nombre }}
+                                        </span>
+                                    </div>
                                 </td>
+
 
                                 {{-- CATEGORÍA --}}
                                 <td class="align-middle">
@@ -66,7 +81,7 @@
                                     </span>
                                 </td>
 
-                                {{-- DETALLES (varias líneas, con salto) --}}
+                                {{-- DETALLES (con saltos de línea) --}}
                                 <td class="align-middle">
                                     <div class="text-xs text-secondary text-wrap"
                                          style="white-space: normal; max-width: 260px;">
@@ -93,28 +108,28 @@
                                 </td>
 
                                 {{-- ACCIONES --}}
-                                <td class="align-middle">
-                                    <div class="d-flex justify-content-center gap-2">
-                                        <a href="{{ route('dishes.show', $dish) }}"
-                                           class="btn btn-sm btn-info">
-                                            Ver
-                                        </a>
+                                <td class="align-middle text-center">
+                                    <a href="{{ route('dishes.show', $dish) }}"
+                                       class="btn btn-sm btn-info me-2">
+                                        Ver
+                                    </a>
 
-                                        <a href="{{ route('dishes.edit', $dish) }}"
-                                           class="btn btn-sm btn-warning text-white">
-                                            Editar
-                                        </a>
+                                    <a href="{{ route('dishes.edit', $dish) }}"
+                                       class="btn btn-sm btn-warning me-2">
+                                        Editar
+                                    </a>
 
-                                        <form action="{{ route('dishes.destroy', $dish) }}"
-                                              method="POST"
-                                              onsubmit="return confirm('¿Eliminar este platillo?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger">
-                                                Eliminar
-                                            </button>
-                                        </form>
-                                    </div>
+                                    <form action="{{ route('dishes.destroy', $dish) }}"
+                                          method="POST"
+                                          style="display:inline-block"
+                                          onsubmit="return confirm('¿Eliminar este platillo?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="btn btn-sm btn-danger">
+                                            Eliminar
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         @empty
@@ -133,4 +148,5 @@
         @include('layouts.footers.auth.footer')
     </div>
 @endsection
+
 

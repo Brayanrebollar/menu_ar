@@ -4,11 +4,13 @@
     @include('layouts.navbars.auth.topnav', ['title' => 'Detalle del platillo'])
 
     @php
-        // Ajusta estos nombres a tu migración si es necesario:
-        // ruta_imagen = columna donde guardas el path de la foto del platillo
-        $imageUrl = $dish->ruta_imagen
-            ? asset('storage/' . $dish->ruta_imagen)
-            : asset('img/default-dish.jpg');   // pon aquí una imagen genérica en /public/img
+        // Foto del platillo (usa la columna "imagen")
+        $imageUrl = $dish->imagen
+            ? asset('storage/' . $dish->imagen)
+            : asset('img/default-dish.jpg');   // imagen genérica en /public/img
+
+        // URL que se codificará en el QR (por ahora usamos la misma ruta show)
+        $qrUrl = route('dishes.show', $dish);
     @endphp
 
     <div class="container-fluid py-4">
@@ -77,19 +79,45 @@
             </div>
         </div>
 
-        {{-- SECCIÓN PARA EL MODELO 3D / AR (LISTA PARA USAR LUEGO) --}}
+        {{-- SECCIÓN QR PARA EL MENÚ / CLIENTES --}}
+        <div class="card mb-4">
+            <div class="card-header pb-0 d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">Código QR del platillo</h6>
+                <small class="text-xs text-muted">
+                    Escanéalo desde el celular para abrir la ficha del platillo.
+                </small>
+            </div>
+            <div class="card-body d-flex flex-column flex-md-row align-items-center">
+                <div class="me-md-4 mb-3 mb-md-0 text-center">
+                    {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(220)->generate($qrUrl) !!}
+                </div>
+                <div>
+                    <p class="text-sm">
+                        Este código QR apunta a la URL:
+                        <br>
+                        <code class="text-xs">{{ $qrUrl }}</code>
+                    </p>
+                    <p class="text-xs text-muted mb-0">
+                        Puedes imprimir este QR y colocarlo en la carta física del restaurante.
+                        Más adelante podemos crear una vista pública especial sólo para clientes.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        {{-- SECCIÓN PARA EL MODELO 3D / REALIDAD AUMENTADA --}}
         <div class="card">
             <div class="card-header pb-0">
                 <h6>Visualización 3D / Realidad aumentada</h6>
             </div>
             <div class="card-body">
-                @if($dish->ruta_modelo_3d)
+                @if($dish->modelo_3d)
                     {{-- Carga del componente model-viewer --}}
                     <script type="module"
                             src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
                     <model-viewer
-                        src="{{ asset('storage/' . $dish->ruta_modelo_3d) }}"
+                        src="{{ asset('storage/' . $dish->modelo_3d) }}"
                         ar
                         ar-modes="scene-viewer quick-look webxr"
                         camera-controls
@@ -97,8 +125,9 @@
                         style="width: 100%; height: 400px; background: #f8f9fa; border-radius: 1rem;">
                     </model-viewer>
 
-                    <p class="text-xs text-muted mt-2">
-                        Usa tu dispositivo compatible para ver el platillo en Realidad Aumentada.
+                    <p class="text-xs text-muted mt-2 mb-0">
+                        En dispositivos compatibles, usa el botón de AR para ver el platillo
+                        en Realidad Aumentada.
                     </p>
                 @else
                     <p class="text-sm text-muted mb-0">
