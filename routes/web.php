@@ -18,7 +18,6 @@ use App\Http\Controllers\DishController;
 | Rutas públicas (invitados)
 |--------------------------------------------------------------------------
 */
-Route::resource('dishes', DishController::class);
 
 // Si no está logueado → login, si ya está logueado → dashboard
 Route::get('/', function () {
@@ -44,30 +43,67 @@ Route::middleware('guest')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Rutas protegidas (requieren login)
+| Rutas comunes autenticadas (cualquier rol)
 |--------------------------------------------------------------------------
 */
 
 Route::middleware('auth')->group(function () {
 
-    // Dashboard
+    // Dashboard principal (luego aquí podemos redirigir por rol si quieres)
     Route::get('/dashboard', [HomeController::class, 'index'])->name('home');
 
-    // Perfil
+    // Perfil (Admin, Chef y Cliente pueden ver/editar su perfil)
     Route::get('/profile', [UserProfileController::class, 'show'])->name('profile');
     Route::post('/profile', [UserProfileController::class, 'update'])->name('profile.update');
 
-    // User Management (página de usuarios de Argon)
-    Route::get('/user-management', [PageController::class, 'userManagement'])->name('user-management');
-    Route::resource('roles', RoleController::class)->except(['show']);
-
     // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+});
 
+/*
+|--------------------------------------------------------------------------
+| Rutas ADMIN (puede acceder a todo)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:Admin'])->group(function () {
+
+    // Administración de usuarios (User Management)
     Route::get('/user-management', [UserManagementController::class, 'index'])->name('user-management');
     Route::get('/user-management/{user}/edit', [UserManagementController::class, 'edit'])->name('user-management.edit');
     Route::put('/user-management/{user}', [UserManagementController::class, 'update'])->name('user-management.update');
 
-    Route::resource('categorias', FoodCategoryController::class)->names('categorias')->parameters(['categorias' => 'categoria']);
+    // Roles
+    Route::resource('roles', RoleController::class)->except(['show']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Rutas ADMIN + CHEF (comparten platillos y categorías)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:Admin|Chef'])->group(function () {
+
+    // Categorías de comida
+    Route::resource('categorias', FoodCategoryController::class)
+        ->names('categorias')
+        ->parameters(['categorias' => 'categoria']);
+
+    // Platillos
+    Route::resource('dishes', DishController::class);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Rutas CLIENTE (además del profile que ya tiene)
+|--------------------------------------------------------------------------
+*/
+
+// De momento solo perfil. Si luego quieres que vea el menú:
+Route::middleware(['auth', 'role:Cliente'])->group(function () {
+
+    // Ejemplo: menú solo lectura para el cliente
+    // Route::get('/menu', [DishController::class, 'index'])->name('cliente.menu');
 
 });
