@@ -6,6 +6,7 @@ use App\Models\Dish;
 use App\Models\FoodCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class DishController extends Controller
 {
@@ -150,5 +151,30 @@ class DishController extends Controller
         return redirect()
             ->route('dishes.index')
             ->with('success', 'Platillo eliminado correctamente.');
+    }
+    public function showPublic(Dish $dish)
+    {
+        // Cargar categoría para mostrarla en la vista
+        $dish->load('categoria');
+
+        return view('dishes.public', compact('dish'));
+    }
+    public function downloadQr(Dish $dish)
+    {
+        // URL a la que apuntará el QR
+        // si ya tienes showPublic(), puedes usar route('dishes.public', $dish)
+        $url = route('dishes.show', $dish);
+
+        // Generamos el QR en SVG (no requiere imagick)
+        $svg = QrCode::format('svg')
+            ->size(600)
+            ->generate($url);
+
+        // Nombre del archivo que se descargará
+        $fileName = 'qr-platillo-' . $dish->id . '.svg';
+
+        return response($svg)
+            ->header('Content-Type', 'image/svg+xml')
+            ->header('Content-Disposition', 'attachment; filename="'.$fileName.'"');
     }
 }

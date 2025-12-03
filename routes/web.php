@@ -18,7 +18,8 @@ use App\Http\Controllers\DishController;
 | Rutas públicas (invitados)
 |--------------------------------------------------------------------------
 */
-
+Route::get('/menu/platillo/{dish}', [DishController::class, 'showPublic'])
+    ->name('dishes.public');
 // Si no está logueado → login, si ya está logueado → dashboard
 Route::get('/', function () {
     return auth()->check()
@@ -95,6 +96,9 @@ Route::middleware(['auth', 'role:Admin|Chef'])->group(function () {
 
     // Platillos
     Route::resource('dishes', DishController::class);
+
+    Route::get('/dishes/{dish}/qr', [DishController::class, 'downloadQr'])
+        ->name('dishes.qr');
 });
 
 /*

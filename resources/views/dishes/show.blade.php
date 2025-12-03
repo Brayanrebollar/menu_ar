@@ -4,13 +4,13 @@
     @include('layouts.navbars.auth.topnav', ['title' => 'Detalle del platillo'])
 
     @php
-        // Foto del platillo (usa la columna "imagen")
+        // Foto del platillo
         $imageUrl = $dish->imagen
             ? asset('storage/' . $dish->imagen)
-            : asset('img/default-dish.jpg');   // imagen genérica en /public/img
+            : asset('img/default-dish.jpg');
 
-        // URL que se codificará en el QR (por ahora usamos la misma ruta show)
-        $qrUrl = route('dishes.show', $dish);
+        // ✅ URL PÚBLICA del platillo (la que verá el cliente al escanear el QR)
+        $publicUrl = route('dishes.public', $dish);
     @endphp
 
     <div class="container-fluid py-4">
@@ -27,7 +27,7 @@
 
             <div class="card-body">
                 <div class="row">
-                    {{-- FOTO + DATOS BÁSICOS --}}
+                    {{-- FOTO --}}
                     <div class="col-md-4">
                         <img src="{{ $imageUrl }}"
                              alt="Foto del platillo"
@@ -45,7 +45,7 @@
                         </p>
                     </div>
 
-                    {{-- TEXTOS DEL PLATILLO --}}
+                    {{-- TEXTOS --}}
                     <div class="col-md-8">
                         @if($dish->descripcion)
                             <p class="text-sm">
@@ -79,40 +79,55 @@
             </div>
         </div>
 
-        {{-- SECCIÓN QR PARA EL MENÚ / CLIENTES --}}
+
+        {{-- =============================
+            SECCIÓN DEL CÓDIGO QR
+        ============================== --}}
         <div class="card mb-4">
             <div class="card-header pb-0 d-flex justify-content-between align-items-center">
                 <h6 class="mb-0">Código QR del platillo</h6>
-                <small class="text-xs text-muted">
-                    Escanéalo desde el celular para abrir la ficha del platillo.
-                </small>
+
+                {{-- ✅ BOTÓN PARA DESCARGAR QR QUE APUNTA A LA VISTA PÚBLICA --}}
+                <a href="{{ 'https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=' . urlencode($publicUrl) }}"
+                   download="qr-platillo-{{ $dish->id }}.png"
+                   class="btn btn-sm btn-info">
+                    Descargar QR
+                </a>
             </div>
+
             <div class="card-body d-flex flex-column flex-md-row align-items-center">
                 <div class="me-md-4 mb-3 mb-md-0 text-center">
-                    {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(220)->generate($qrUrl) !!}
+                    {{-- ✅ QR MOSTRADO EN PANTALLA, TAMBIÉN APUNTA A LA VISTA PÚBLICA --}}
+                    {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(220)->generate($publicUrl) !!}
                 </div>
+
                 <div>
                     <p class="text-sm">
                         Este código QR apunta a la URL:
                         <br>
-                        <code class="text-xs">{{ $qrUrl }}</code>
+                        <code class="text-xs">{{ $publicUrl }}</code>
                     </p>
+
                     <p class="text-xs text-muted mb-0">
                         Puedes imprimir este QR y colocarlo en la carta física del restaurante.
-                        Más adelante podemos crear una vista pública especial sólo para clientes.
+                        Al escanearlo, el cliente verá solo la vista pública del platillo
+                        (información y modelo 3D), sin panel de administración.
                     </p>
                 </div>
             </div>
         </div>
 
-        {{-- SECCIÓN PARA EL MODELO 3D / REALIDAD AUMENTADA --}}
+
+        {{-- =============================
+            VISUALIZACIÓN 3D / AR
+        ============================== --}}
         <div class="card">
             <div class="card-header pb-0">
                 <h6>Visualización 3D / Realidad aumentada</h6>
             </div>
             <div class="card-body">
                 @if($dish->modelo_3d)
-                    {{-- Carga del componente model-viewer --}}
+
                     <script type="module"
                             src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
@@ -126,9 +141,9 @@
                     </model-viewer>
 
                     <p class="text-xs text-muted mt-2 mb-0">
-                        En dispositivos compatibles, usa el botón de AR para ver el platillo
-                        en Realidad Aumentada.
+                        En dispositivos compatibles, usa el botón de AR para ver el platillo en Realidad Aumentada.
                     </p>
+
                 @else
                     <p class="text-sm text-muted mb-0">
                         Este platillo aún no tiene un modelo 3D cargado.
